@@ -1,0 +1,139 @@
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.about-section {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Mission Section */
+.mission {
+  text-align: center;
+  margin-bottom: 50px;
+  padding: 0 20px;
+}
+
+.mission h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.mission p {
+  font-size: 1.2rem;
+  color: #666;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Container Layout */
+.container-about {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* Card Styles */
+.card {
+  width: 250px;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+.card img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.card p {
+  padding: 15px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Activities Styles */
+.activities {
+  width: 350px;
+  text-align: center;
+  background-color: #f4f4f4;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.activities:hover {
+  transform: scale(1.05);
+}
+
+.activities img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.activities p {
+  padding: 15px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 768px) {
+  .about-section {
+      padding: 20px 10px;
+  }
+
+  .mission h1 {
+      font-size: 2rem;
+  }
+
+  .mission p {
+      font-size: 1rem;
+  }
+
+  .container-about {
+      flex-direction: column;
+      gap: 20px;
+  }
+
+  .card, .activities {
+      width: 100%;
+      max-width: 350px;
+  }
+
+  .card img, .activities img {
+      height: 250px;
+  }
+}
+
+/* Tablet Responsiveness */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .container-about {
+      gap: 20px;
+  }
+
+  .card, .activities {
+      width: calc(50% - 30px);
+  }
+}

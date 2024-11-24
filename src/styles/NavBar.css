@@ -1,0 +1,161 @@
+
+    .navbar {
+      background-color: #1a1a1a;
+      color: white;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .navbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .logo:hover {
+      color: #e2e2e2;
+    }
+
+    /* Desktop Menu Styles */
+    .nav-links {
+      display: none; /* Hidden by default for mobile */
+    }
+
+    /* Show nav links only on desktop */
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-link {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 0;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: white;
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      .nav-link:hover {
+        color: #e2e2e2;
+      }
+
+      /* Hide hamburger on desktop */
+      .mobile-menu-button {
+        display: none;
+      }
+    }
+
+    /* Mobile Menu Styles */
+    .mobile-menu-button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0.5rem;
+      transition: transform 0.3s ease;
+      display: none; /* Hidden by default */
+    }
+
+    @media (max-width: 767px) {
+      .navbar-content{
+           display: flex;
+           justify-content: space-between;
+      }
+      .mobile-menu-button {
+        display: block; /* Show only on mobile */
+        width: fit-content;
+      }
+    }
+
+    .mobile-menu {
+      position: absolute;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      background-color: #1a1a1a;
+      padding: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .mobile-menu.open {
+      max-height: 300px;
+      padding: 1rem 0;
+      border-top: 1px solid #333;
+    }
+
+    .mobile-menu-items {
+      display: flex;
+      flex-direction: column;
+      padding: 0 2rem;
+    }
+
+    .mobile-link {
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 0;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    .mobile-menu.open .mobile-link {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .mobile-menu.open .mobile-link:nth-child(1) { transition-delay: 0.1s; }
+    .mobile-menu.open .mobile-link:nth-child(2) { transition-delay: 0.2s; }
+    .mobile-menu.open .mobile-link:nth-child(3) { transition-delay: 0.3s; }
+    .mobile-menu.open .mobile-link:nth-child(4) { transition-delay: 0.4s; }
+
+    .mobile-link:hover {
+      color: #e2e2e2;
+      padding-left: 0.5rem;
+    }
+
+    .rotate-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .rotate-icon.open {
+      transform: rotate(90deg);
+    }
+  
