@@ -1,210 +1,294 @@
-
-
-import  { useState,useEffect } from 'react';
+import  { useState, useRef, useEffect } from 'react';
+import { 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Send, 
+  User, 
+  MessageCircle,
+  AlertCircle
+} from 'lucide-react';
 import '../styles/contact.css';
-import { MapPin, Phone, Mail, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+
+
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
-    subject: '',
+    phone: '',
     message: ''
   });
 
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    message: ''
+  });
 
-  useEffect(() => {
-    if (submitStatus) {
-      const timer = setTimeout(() => {
-        setSubmitStatus(null);
-      }, 3000);
+  const sectionsRef = useRef([]);
 
-      return () => clearTimeout(timer);
-    }
-  }, [submitStatus]);
-
- 
-
-  // Validation function
-  const validateForm = () => {
-    let tempErrors = {};
-    let isValid = true;
-
-    if (!formData.fullName.trim()) {
-      tempErrors.fullName = 'Name is required';
-      isValid = false;
-    } else if (formData.fullName.length < 2) {
-      tempErrors.fullName = 'Name must be at least 2 characters';
-      isValid = false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      tempErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!emailRegex.test(formData.email)) {
-      tempErrors.email = 'Please enter a valid email';
-      isValid = false;
-    }
-
-    if (!formData.subject.trim()) {
-      tempErrors.subject = 'Subject is required';
-      isValid = false;
-    }
-
-    if (!formData.message.trim()) {
-      tempErrors.message = 'Message is required';
-      isValid = false;
-    } else if (formData.message.length < 10) {
-      tempErrors.message = 'Message must be at least 10 characters';
-      isValid = false;
-    }
-
-    setErrors(tempErrors);
-    return isValid;
+  // Validation functions
+  const validateName = (name) => {
+    if (!name.trim()) return 'Name is required';
+    if (name.trim().length < 2) return 'Name must be at least 2 characters';
+    if (name.trim().length > 50) return 'Name must be less than 50 characters';
+    if (!/^[a-zA-Z\s]+$/.test(name.trim())) return 'Name can only contain letters';
+    return '';
   };
 
+  const validateEmail = (email) => {
+    if (!email.trim()) return 'Email is required';
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) return 'Invalid email format';
+    return '';
+  };
+
+ // Improved Phone Regex
+ const validatePhone = (phone) => {
+  if (!phone.trim()) return '';  // Optional field
+  
+  // More comprehensive phone number validation
+  const phoneRegex = /^(\+\d{1,3}[- ]?)?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
+  
+  if (!phoneRegex.test(phone.trim())) {
+    return 'Invalid phone number format (e.g., +1 (555) 123-4567)';
+  }
+  return '';
+};
+
+
+  const validateMessage = (message) => {
+    if (!message.trim()) return 'Message is required';
+    if (message.trim().length < 10) return 'Message must be at least 10 characters';
+    if (message.trim().length > 500) return 'Message must be less than 500 characters';
+    return '';
+  };
+
+  // Validate all fields
+  const validateForm = () => {
+    const nameError = validateName(formData.name);
+    const emailError = validateEmail(formData.email);
+    const phoneError = validatePhone(formData.phone);
+    const messageError = validateMessage(formData.message);
+
+    setErrors({
+      name: nameError,
+      email: emailError,
+      phone: phoneError,
+      message: messageError
+    });
+
+    return !nameError && !emailError && !phoneError && !messageError;
+  };
+
+  // Input change handler with real-time validation
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+
+    // Validate individual field as user types
+    let error = '';
+    switch(name) {
+      case 'name':
+        error = validateName(value);
+        break;
+      case 'email':
+        error = validateEmail(value);
+        break;
+      case 'phone':
+        error = validatePhone(value);
+        break;
+      case 'message':
+        error = validateMessage(value);
+        break;
+      default:
+        break;
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+  };
+
+  // Form submission handler
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validate entire form before submission
+    if (validateForm()) {
+      console.log('Form submitted successfully:', formData);
+      // Add your form submission logic here (e.g., API call)
+      alert('Form submitted successfully!');
+      
+      // Optional: Reset form after successful submission
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
+      setErrors({
+        name: '',
+        email: '',
+        phone: '',
+        message: ''
+      });
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      if (validateForm()) {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setSubmitStatus('success');
-        setFormData({
-          fullName: '',
-          email: '',
-          subject: '',
-          message: ''
+  useEffect(() => {
+   
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          } else {
+            entry.target.classList.remove('visible');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+  
+    // Add null check and use optional chaining
+    if (sectionsRef.current) {
+      sectionsRef.current.forEach((section) => {
+        if (section) observer.observe(section);
+      });
+    }
+  
+    // Cleanup function with additional safety checks
+    return () => {
+      if (sectionsRef.current) {
+        sectionsRef.current.forEach((section) => {
+          if (section) observer.unobserve(section);
         });
       }
-    } catch (err) {
-      setSubmitStatus('error');
-      console.error('Form submission error:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const renderFormField = (name, label, type = 'text', placeholder) => (
-    <div className="form-group">
-      <label htmlFor={name}>{label}</label>
-      {type === 'textarea' ? (
-        <textarea
-          id={name}
-          name={name}
-          value={formData[name]}
-          onChange={handleChange}
-          className={errors[name] ? 'error' : ''}
-          placeholder={placeholder}
-          rows="4"
-        />
-      ) : (
-        <input
-          type={type}
-          id={name}
-          name={name}
-          value={formData[name]}
-          onChange={handleChange}
-          className={errors[name] ? 'error' : ''}
-          placeholder={placeholder}
-        />
-      )}
-      {errors[name] && (
-        <p className="error-message animate-shake">{errors[name]}</p>
-      )}
-    </div>
-  );
+    };
+  }, []); // Dependency array remains empty if ref doesn't change
 
   return (
-    <div className="contact-section">
-      <div className="container">
-        <div className="header animate-fade-in">
-          <h2>Contact Us</h2>
-          <p>Have questions? We would  love to hear from you. Send us a message and we will respond as soon as possible.</p>
-        </div>
-
-        <div className="content-grid">
-          {/* Contact Information */}
-          <div className="contact-info card">
-            <h3>Contact Information</h3>
-            
-            <div className="info-items">
-              {[
-                { Icon: MapPin, title: 'Address', lines: ['123 Education Street', 'Knowledge City, KN 12345'] },
-                { Icon: Phone, title: 'Phone', lines: ['Main: (555) 123-4567', 'Admissions: (555) 123-4568'] },
-                { Icon: Mail, title: 'Email', lines: ['info@school.edu', 'admissions@school.edu'] },
-                { Icon: Clock, title: 'Office Hours', lines: ['Monday - Friday: 8:00 AM - 4:30 PM', 'Saturday - Sunday: Closed'] }
-              ].map(({ Icon, title, lines }, index) => (
-                <div key={title} className="info-item animate-slide-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <Icon className="icon" />
-                  <div>
-                    <h4>{title}</h4>
-                    {lines.map((line, i) => (
-                      <p key={i}>{line}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Contact Form */}
-          <div className="contact-form card">
-            <h3>Send us a Message</h3>
-            
-            {submitStatus && (
-              <div className={`alert ${submitStatus}`}>
-                {submitStatus === 'success' ? (
-                  <><CheckCircle className="icon" />Message sent successfully!</>
-                ) : (
-                  <><AlertCircle className="icon" />Failed to send message. Please try again.</>
-                )}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} noValidate>
-              {renderFormField('fullName', 'Full Name', 'text', 'John Doe')}
-              {renderFormField('email', 'Email', 'email', 'johndoe@example.com')}
-              {renderFormField('subject', 'Subject', 'text', 'How can we help?')}
-              {renderFormField('message', 'Message', 'textarea', 'Your message here...')}
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={isSubmitting ? 'submitting' : ''}
-              >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
-                {setTimeout(()=>{
-                   submitStatus === 'success'
-                },1000)}
-              </button>
-            </form>
-          </div>
-        </div>
+    <div className="contact-page">
+      <div 
+        ref={(el) => sectionsRef.current[0] = el} 
+        className="contact-header scroll-section"
+      >
+        <h1>Contact Us</h1>
+        <p>We would  love to hear from you! Fill out the form below.</p>
       </div>
 
-      
+      <div className="contact-container">
+        <div 
+          ref={(el) => sectionsRef.current[1] = el} 
+          className="contact-info scroll-section"
+        >
+          <div className="contact-detail">
+            <Mail className="contact-icon" />
+            <div>
+              <h3>Email</h3>
+              <p>support@example.com</p>
+            </div>
+          </div>
+          <div className="contact-detail">
+            <Phone className="contact-icon" />
+            <div>
+              <h3>Phone</h3>
+              <p>+1 (555) 123-4567</p>
+            </div>
+          </div>
+          <div className="contact-detail">
+            <MapPin className="contact-icon" />
+            <div>
+              <h3>Address</h3>
+              <p>123 Tech Lane, Innovation City</p>
+            </div>
+          </div>
+        </div>
+
+        <form 
+          ref={(el) => sectionsRef.current[2] = el} 
+          className="contact-form scroll-section" 
+          onSubmit={handleSubmit}
+        >
+          <div className="form-group">
+            <User className="input-icon" />
+            <input 
+              type="text" 
+              name="name"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              className={errors.name ? 'error' : ''}
+            />
+            {errors.name && (
+              <div className="error-message">
+                <AlertCircle className="error-icon" />
+                {errors.name}
+              </div>
+            )}
+          </div>
+          <div className="form-group">
+            <Mail className="input-icon" />
+            <input 
+              type="email" 
+              name="email"
+              placeholder="Your Email"
+              value={formData.email}
+              onChange={handleChange}
+              className={errors.email ? 'error' : ''}
+            />
+            {errors.email && (
+              <div className="error-message">
+                <AlertCircle className="error-icon" />
+                {errors.email}
+              </div>
+            )}
+          </div>
+          <div className="form-group">
+            <Phone className="input-icon" />
+            <input 
+              type="tel" 
+              name="phone"
+              placeholder="Your Phone (Optional)"
+              value={formData.phone}
+              onChange={handleChange}
+              className={errors.phone ? 'error' : ''}
+            />
+            {errors.phone && (
+              <div className="error-message">
+                <AlertCircle className="error-icon" />
+                {errors.phone}
+              </div>
+            )}
+          </div>
+          <div className="form-group">
+            <MessageCircle className="input-icon" />
+            <textarea 
+              name="message"
+              placeholder="Your Message"
+              value={formData.message}
+              onChange={handleChange}
+              className={errors.message ? 'error' : ''}
+            />
+            {errors.message && (
+              <div className="error-message">
+                <AlertCircle className="error-icon" />
+                {errors.message}
+              </div>
+            )}
+          </div>
+          <button type="submit" className="submit-btn">
+            <Send /> Send Message
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
