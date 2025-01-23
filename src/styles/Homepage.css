@@ -18,11 +18,39 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('../images/back.jpg');
+    padding: 20px;
+    background-color: #f5f5f5; /* Placeholder color */
+    transition: opacity 0.3s ease-in;
+    position: relative;
+}
+
+.bg-loaded {
+    /* Use CSS custom properties for dynamic backgrounds */
+    background-image: var(--bg-jpg); /* Fallback */
+    background-image: var(--bg-webp); /* Modern format */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    padding: 20px;
+    opacity: 1;
+}
+
+/* Responsive background positioning */
+@media (max-width: 768px) {
+    .bg-loaded {
+        background-position: center 20%; /* Adjust mobile focus point */
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .bg-loaded {
+        background-position: center; /* Default for tablets */
+    }
+}
+
+@media (min-width: 1025px) {
+    .bg-loaded {
+        background-position: center; /* Default for desktop */
+    }
 }
 
 /* Background overlay */
